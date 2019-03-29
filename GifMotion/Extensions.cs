@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
+﻿using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -19,10 +14,30 @@ namespace GifMotion
             }
             else
             {
-                // TODO: handle quantizing here...
-            }
-        }
+                Quantizer quantizer;
+                switch (quality)
+                {
+                    case GIFQuality.Grayscale:
+                        quantizer = new GrayscaleQuantizer();
+                        break;
+                    case GIFQuality.Bit4:
+                        quantizer = new OctreeQuantizer(15, 4);
+                        break;
+                    case GIFQuality.Default:
+                    case GIFQuality.Bit8:
+                    default:
+                        quantizer = new OctreeQuantizer(255, 4);
+                        break;
+                }
 
+                using (Bitmap quantized = quantizer.Quantize(img))
+                {
+                    quantized.Save(stream, ImageFormat.Gif);
+                }
+            }
+
+            
+        }
 
         public static void Write(this FileStream stream, byte[] array)
         {
