@@ -36,7 +36,9 @@ namespace GifMotion
 
         public void AddFrame(string path, GIFQuality quality = GIFQuality.Default)
         {
-            
+            using (Image img = Helper.LoadImage(path)) {
+                AddFrame(img, quality);
+            }
         }
 
         private void Finish()
