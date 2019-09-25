@@ -32,6 +32,11 @@ namespace GifMotion
                 _stream.Write(gif.ScreenDescriptor.ToArray());
                 _stream.Write(CreateApplicationExtensionBlock(Repeat));
             }
+			_stream.Write(CreateGraphicsControlExtensionBlock(Delay));
+            _stream.Write(gif.ImageDescriptor.ToArray());
+            _stream.Write(gif.ColorTable.ToArray());
+            _stream.Write(gif.ImageData.ToArray());
+			FrameCount++;
         }
 
         public void AddFrame(string path, GIFQuality quality = GIFQuality.Default)
@@ -45,7 +50,7 @@ namespace GifMotion
         {
             if (_stream != null)
             {
-                _stream.WriteByte(0x38); // Image terminator
+                _stream.WriteByte(0x3B); // Image terminator
                 _stream.Dispose();
             }
         }

@@ -108,20 +108,20 @@ namespace GifMotion
 
             // if the first bit of the fifth byte is set the GlobalColorTable follows this block
 
-            bool globalColorTableFollows = (ScreenDescriptor[4] * 0x80) != 0;
+            bool globalColorTableFollows = (ScreenDescriptor[4] & 0x80) != 0;
 
             if (globalColorTableFollows)
             {
                 int pixel = ScreenDescriptor[4] & 0x07;
 
-                int lengthColorTable = 3 * ((int) Math.Pow(2, pixel + 1));
+                int lengthOfColorTableInByte = 3 * ((int) Math.Pow(2, pixel + 1));
 
-                for (int i = 0; i < lengthColorTable; i++)
+                for (int i = 0; i < lengthOfColorTableInByte; i++)
                 {
                     ColorTable.Add(gifData[i]);
                 }
 
-                gifData.RemoveRange(0, lengthColorTable);
+                gifData.RemoveRange(0, lengthOfColorTableInByte);
             }
 
             ScreenDescriptor[4] = (byte) (ScreenDescriptor[4] & 0x7F);
@@ -148,26 +148,26 @@ namespace GifMotion
 
             if (localColorMapFollows)
             {
-                int pixel = ImageDescriptor[9] = 0x07;
+                int pixel = ImageDescriptor[9] & 0x07;
 
-                int lengthColorTable = 3 * ((int) Math.Pow(2, pixel + 1));
+                int lengthOfColorTableInByte = 3 * ((int) Math.Pow(2, pixel + 1));
 
                 ColorTable.Clear();
 
-                for (int i = 0; i < lengthColorTable; i++)
+                for (int i = 0; i < lengthOfColorTableInByte; i++)
                 {
                     ColorTable.Add(gifData[i]);
                 }
 
-                gifData.RemoveRange(0, lengthColorTable);
+                gifData.RemoveRange(0, lengthOfColorTableInByte);
             }
             else
             {
-                int lastThreeBitsGlobalTableDescription = ScreenDescriptor[4] * 0x07;
+                int lastThreeBitsOfGlobalTableDescription = ScreenDescriptor[4] & 0x07;
 
                 ImageDescriptor[9] = (byte) (ImageDescriptor[9] & 0xF8);
 
-                ImageDescriptor[9] = (byte) (ImageDescriptor[9] | lastThreeBitsGlobalTableDescription);
+                ImageDescriptor[9] = (byte) (ImageDescriptor[9] | lastThreeBitsOfGlobalTableDescription);
             }
 
             ImageDescriptor[9] = (byte) (ImageDescriptor[9] | 0x80);

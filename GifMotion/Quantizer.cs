@@ -22,8 +22,13 @@ namespace GifMotion
             _pixelSize = Marshal.SizeOf(typeof(Color32));
         }
 
-        public Bitmap Quantize(Image source)
-        {
+        /// <summary>
+        /// Quantize an image and return the resulting output bitmap
+        /// </summary>
+        /// <param name="source">The image to quantize</param>
+        /// <returns>A quantized version of the image</returns>
+        public Bitmap Quantize(Image source) {
+            // Get the size of the source image
             int height = source.Height;
             int width = source.Width;
 
@@ -58,13 +63,18 @@ namespace GifMotion
                 // all image pixels, build a data structure, and create a palette.
                 if (!_singlePass)
                     FirstPass(sourceData, width, height);
-            }
-            finally
-            {
-                // ensure that bits are unlocked
+            
+                // Then set the color palette on the output bitmap. I'm passing in the current palette
+                // as there's no way to construct a new, empty palette.
+                output.Palette = GetPalette(output.Palette);
+                // Then call the second pass which actually does the conversion
+                SecondPass(sourceData, output, width, height, bounds);
+            } finally {
+                // Ensure that the bits are unlocked
                 copy.UnlockBits(sourceData);
             }
 
+			// Last but not least, return the output bitmap
             return output;
         }
 
@@ -72,8 +82,8 @@ namespace GifMotion
         /// Execute the first pass through the pixels in the image
         /// </summary>
         /// <param name="sourceData">The source data</param>
-        /// <param name="width">The width of the pixels of the image</param>
-        /// <param name="height">The height of the pixels of the image</param>
+        /// <param name="width">The width in pixels of the image</param>
+        /// <param name="height">The height in pixels of the image</param>
         protected virtual void FirstPass(BitmapData sourceData, int width, int height)
         {
             // Define the source data pointers. The source row is a byte to
@@ -91,7 +101,7 @@ namespace GifMotion
                 {
                     InitialQuantizePixel(new Color32(pSourcePixel));
                     pSourcePixel = (IntPtr)((long) pSourcePixel + _pixelSize);
-                }
+                } // Now I have the pixel, call the FirstPassQuantize function...
 
                 // add the stride to the source row
                 pSourceRow = (IntPtr) ((long) pSourceRow + sourceData.Stride);

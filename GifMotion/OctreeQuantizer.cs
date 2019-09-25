@@ -322,7 +322,7 @@ namespace GifMotion
                 /// <returns>The number of leaves removed</returns>
                 public int Reduce()
                 {
-                    _red = _blue = _green = 0;
+                    _red = _green = _blue = 0;
                     int children = 0;
 
                     // Loop through all children and add their information to the node
@@ -408,7 +408,7 @@ namespace GifMotion
                 }
 
                 /// <summary>
-                /// Flag indicating that is a leaf node
+                /// Flag indicating that this is a leaf node
                 /// </summary>
                 private bool _leaf;
 
