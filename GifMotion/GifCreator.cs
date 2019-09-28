@@ -6,13 +6,23 @@ namespace GifMotion
 {
     public class GifCreator : IDisposable
     {
-        private FileStream _stream;
+        private bool _createdHeader;
+        private readonly Stream _stream;
 
-        public GifCreator(string filePath, int delay, int repeat = 0)
+        public GifCreator(Stream stream, int delay = 33, int repeat = 0)
+        {
+            Delay = delay;
+            Repeat = repeat;
+
+            _stream = stream;
+        }
+        public GifCreator(string filePath, int delay = 33, int repeat = 0)
         {
             FilePath = filePath;
             Delay = delay;
             Repeat = repeat;
+
+            _stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.Read);
         }
 
         public string FilePath { get; }
@@ -36,18 +46,18 @@ namespace GifMotion
             var gif = new GifClass();
             gif.LoadGifImage(image, quality);
 
-            if (_stream == null)
+            if (!_createdHeader)
             {
-                _stream = new FileStream(FilePath, FileMode.Create, FileAccess.Write, FileShare.Read);
-                _stream.Write(CreateHeaderBlock());
-                _stream.Write(gif.ScreenDescriptor.ToArray());
-                _stream.Write(CreateApplicationExtensionBlock(Repeat));
+                AppendToStream(CreateHeaderBlock());
+                AppendToStream(gif.ScreenDescriptor.ToArray());
+                AppendToStream(CreateApplicationExtensionBlock(Repeat));
+                _createdHeader = true;
             }
 
-            _stream.Write(CreateGraphicsControlExtensionBlock(delay > -1 ? delay : Delay));
-            _stream.Write(gif.ImageDescriptor.ToArray());
-            _stream.Write(gif.ColorTable.ToArray());
-            _stream.Write(gif.ImageData.ToArray());
+            AppendToStream(CreateGraphicsControlExtensionBlock(delay > -1 ? delay : Delay));
+            AppendToStream(gif.ImageDescriptor.ToArray());
+            AppendToStream(gif.ColorTable.ToArray());
+            AppendToStream(gif.ImageData.ToArray());
 
             FrameCount++;
         }
@@ -66,6 +76,11 @@ namespace GifMotion
             }
         }
 
+        private void AppendToStream(byte[] data)
+        {
+            _stream.Write(data, 0, data.Length);
+        }
+
         /// <summary>
         ///     Finish creating the GIF and start flushing
         /// </summary>
@@ -73,7 +88,8 @@ namespace GifMotion
         {
             if (_stream == null) return;
             _stream.WriteByte(0x3B); // Image terminator
-            _stream.Dispose();
+            if (_stream.GetType() == typeof(FileStream))
+                _stream.Dispose();
         }
 
         /// <summary>
