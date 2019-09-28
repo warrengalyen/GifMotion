@@ -19,7 +19,7 @@ namespace GifMotion.Demo
             using (var gif = AnimatedGif.Create(workingPath + "/test.gif", 33))
             {
                 var img = Image.FromFile(workingPath + "/forest.jpg");
-                gif.AddFrame(img, quality: GIFQuality.Bit8);
+                gif.AddFrame(img, delay: -1, quality: GIFQuality.Bit8);
             }
         }
     }
