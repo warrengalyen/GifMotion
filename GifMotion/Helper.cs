@@ -30,10 +30,7 @@ namespace GifMotion
             {
                 int pos = filePath.LastIndexOf('.');
 
-                if (pos >= 0)
-                {
-                    return filePath.Substring(pos + 1);
-                }
+                if (pos >= 0) return filePath.Substring(pos + 1);
             }
 
             return null;
@@ -58,10 +55,7 @@ namespace GifMotion
 
         public static void CreateDirectoryFromFilePath(string path)
         {
-            if (!string.IsNullOrEmpty(path))
-            {
-                CreateDirectoryFromDirectoryPath(Path.GetDirectoryName(path));
-            }
+            if (!string.IsNullOrEmpty(path)) CreateDirectoryFromDirectoryPath(Path.GetDirectoryName(path));
         }
 
         public static void CreateDirectoryFromDirectoryPath(string path)

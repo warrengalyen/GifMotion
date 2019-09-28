@@ -6,11 +6,6 @@ namespace GifMotion
 {
     public class GifCreator : IDisposable
     {
-        public string FilePath { get; }
-        public int Delay { get; }
-        public int Repeat { get; }
-        public int FrameCount { get; private set; }
-
         private FileStream _stream;
 
         public GifCreator(string filePath, int delay, int repeat = 0)
@@ -20,9 +15,19 @@ namespace GifMotion
             Repeat = repeat;
         }
 
+        public string FilePath { get; }
+        public int Delay { get; }
+        public int Repeat { get; }
+        public int FrameCount { get; private set; }
+
+        public void Dispose()
+        {
+            Finish();
+        }
+
         public void AddFrame(Image img, GIFQuality quality = GIFQuality.Default)
         {
-            GifClass gif = new GifClass();
+            var gif = new GifClass();
             gif.LoadGifImage(img, quality);
 
             if (_stream == null)
@@ -41,23 +46,16 @@ namespace GifMotion
 
         public void AddFrame(string path, GIFQuality quality = GIFQuality.Default)
         {
-            using (Image img = Helper.LoadImage(path)) {
+            using (var img = Helper.LoadImage(path)) {
                 AddFrame(img, quality);
             }
         }
 
         private void Finish()
         {
-            if (_stream != null)
-            {
-                _stream.WriteByte(0x3B); // Image terminator
-                _stream.Dispose();
-            }
-        }
-
-        public void Dispose()
-        {
-            Finish();
+            if (_stream == null) return;
+            _stream.WriteByte(0x3B); // Image terminator
+            _stream.Dispose();
         }
 
         private static byte[] CreateHeaderBlock() 

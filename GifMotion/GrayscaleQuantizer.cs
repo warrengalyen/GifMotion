@@ -48,7 +48,7 @@ namespace GifMotion
         /// <returns>The quantized value</returns>
         protected override byte QuantizePixel(Color32 pixel)
         {
-            double luminance = (pixel.Red * 0.299) + (pixel.Green * 0.587) + (pixel.Blue * 0.114);
+            double luminance = pixel.Red * 0.299 + pixel.Green * 0.587 + pixel.Blue * 0.114;
 
             // Gray scale is an intensity map from black to white.
             // Compute the index to the grayscale entry that

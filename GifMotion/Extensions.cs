@@ -30,7 +30,7 @@ namespace GifMotion
                         break;
                 }
 
-                using (Bitmap quantized = quantizer.Quantize(img))
+                using (var quantized = quantizer.Quantize(img))
                 {
                     quantized.Save(stream, ImageFormat.Gif);
                 }
