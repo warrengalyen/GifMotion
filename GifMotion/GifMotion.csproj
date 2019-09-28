@@ -5,9 +5,9 @@
     <Company>Mechanika Design</Company>
     <Copyright>Copyright ©  2019</Copyright>
     <Description>A .NET library for reading and creating animated GIFs</Description>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>Warren Galyen</Authors>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <ApplicationIcon></ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/warrengalyen/GifMotion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/warrengalyen/GifMotion/blob/master/LICENSE</PackageLicenseUrl>
@@ -17,14 +17,6 @@
     <PackageTags>Animated GIF Create Load Encoder Encoding Decoder Decoding</PackageTags>
     <PackageReleaseNotes>Migrate to .NET Standard</PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Icon.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Icon.ico" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
