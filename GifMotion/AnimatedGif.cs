@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Media.Imaging;
-
-namespace GifMotion
+﻿namespace GifMotion
 {
     public static class AnimatedGif
     {
@@ -15,13 +12,5 @@ namespace GifMotion
         public static GifCreator Create(string filePath, int delay, int repeat = 0) =>
             new GifCreator(filePath, delay, repeat);
 
-        /// <summary>
-        /// Load an Animated GIF from File (not yet custom implemented)
-        /// </summary>
-        /// <param name="filePath">Path to GIF File</param>
-        /// <returns>GifBitmapDecoder using the GIF File</returns>
-        public static GifBitmapDecoder Load(string filePath) => new GifBitmapDecoder(new Uri(filePath),
-            BitmapCreateOptions.DelayCreation,
-            BitmapCacheOption.Default);
     }
 }
