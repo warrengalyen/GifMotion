@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Drawing;
+using System.IO;
 
 namespace GifMotion
 {
@@ -25,10 +25,16 @@ namespace GifMotion
             Finish();
         }
 
-        public void AddFrame(Image img, GIFQuality quality = GIFQuality.Default)
+        /// <summary>
+        ///     Add a new frame to the GIF
+        /// </summary>
+        /// <param name="image">The image to add to the GIF stack</param>
+        /// <param name="delay">The delay in milliseconds this GIF will be delayed (-1: Indicating class property delay)</param>
+        /// <param name="quality">The GIFs quality</param>
+        public void AddFrame(Image image, int delay = -1, GIFQuality quality = GIFQuality.Default)
         {
             var gif = new GifClass();
-            gif.LoadGifImage(img, quality);
+            gif.LoadGifImage(image, quality);
 
             if (_stream == null)
             {
@@ -37,20 +43,32 @@ namespace GifMotion
                 _stream.Write(gif.ScreenDescriptor.ToArray());
                 _stream.Write(CreateApplicationExtensionBlock(Repeat));
             }
-			_stream.Write(CreateGraphicsControlExtensionBlock(Delay));
+
+            _stream.Write(CreateGraphicsControlExtensionBlock(delay > -1 ? delay : Delay));
             _stream.Write(gif.ImageDescriptor.ToArray());
             _stream.Write(gif.ColorTable.ToArray());
             _stream.Write(gif.ImageData.ToArray());
-			FrameCount++;
+
+            FrameCount++;
         }
 
-        public void AddFrame(string path, GIFQuality quality = GIFQuality.Default)
+        /// <summary>
+        ///     Add a new frame to the GIF
+        /// </summary>
+        /// <param name="path">The image's path which will be added to the GIF stack</param>
+        /// <param name="delay">The delay in milliseconds this GIF will be delayed (-1: Indicating class property delay)</param>
+        /// <param name="quality">The GIFs quality</param>
+        public void AddFrame(string path, int delay = -1, GIFQuality quality = GIFQuality.Default)
         {
-            using (var img = Helper.LoadImage(path)) {
-                AddFrame(img, quality);
+            using (var img = Helper.LoadImage(path))
+            {
+                AddFrame(img, delay, quality);
             }
         }
 
+        /// <summary>
+        ///     Finish creating the GIF and start flushing
+        /// </summary>
         private void Finish()
         {
             if (_stream == null) return;
@@ -58,12 +76,15 @@ namespace GifMotion
             _stream.Dispose();
         }
 
-        private static byte[] CreateHeaderBlock() 
+        /// <summary>
+        ///     Create the GIFs header block (GIF89a)
+        /// </summary>
+        private static byte[] CreateHeaderBlock()
         {
             return new[] { (byte)'G', (byte)'I', (byte)'F', (byte)'8', (byte)'9', (byte)'a' };
         }
 
-        private static byte[] CreateApplicationExtensionBlock(int repeat) 
+        private static byte[] CreateApplicationExtensionBlock(int repeat)
         {
             byte[] buffer = new byte[19];
             buffer[0] = 0x21; // Extension introducer
