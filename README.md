@@ -36,8 +36,9 @@ using (GifCreator gifCreator = AnimatedGif.Create("C:\\awesomegif.gif", 33))
 
 ### Reading a GIF
 ```cs
-using (GifBitmapDecoder gifDecoder = AnimatedGif.Load("C:\\samplegif.gif")) 
+var animatedGif = new AnimatedGif(workingPath + "/samplegif.gif");
+for (int i = 0; i < animatedGif.FrameCount; i++)
 {
-    // Do stuff
+    Image gifImage = animatedGif.GetFrame(i);
 }
 ```
